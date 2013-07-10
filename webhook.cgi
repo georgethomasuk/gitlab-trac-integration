@@ -45,9 +45,19 @@ def process_commits():
     #Load the commit details from the request body
     json_data = json.load(sys.stdin)
 
-    #Identify the repository name (asumes that Trac and GitLab are using the same name)
-    #TODO: Should allow repo name to be optionally set via query string
-    repo_name = json_data['repository']['name']
+    #Get the repo name form the query string (first) then json
+    if not 'repo_name' in query_string:
+        repo_name = json_data['repository']['name']
+    else:
+        if len(query_string['repo_name']) == 0:
+            #If no respo_name provided then exit
+            repo_name = json_data['repository']['name']
+        elif len(query_string['repo_name']) > 1:
+            #If multiple repos names passed then exit
+            return
+        else:
+            #Assign the repo name
+            repo_name = query_string['repo_name'][0]
 
     #Get a list of the new commits
     pending_commits = map(itemgetter('id'), json_data['commits'])
@@ -56,6 +66,7 @@ def process_commits():
     #TODO: Is probably possible to do in one call
     for commit in pending_commits:
         command = ["trac-admin", "%s%s" % (TRAC_ENV, project_name), "changeset", "added", "'%s'" % repo_name, "%s" % commit]
+        print command
         call(command)
 
 #Return an empty reponse

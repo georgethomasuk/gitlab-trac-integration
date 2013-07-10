@@ -10,9 +10,13 @@ GitLab Webhook Configuration
 
 Your GitLab webhook should be pointed at:
 
-    http://127.0.0.1/pathtohook?project_name=<tracprojectname>
+    http://127.0.0.1/pathtohook?project_name=<tracprojectname>&repo_name=<tracreponame>
 
 If no Trac project name is specified in the query string, then it will use the default project.
+If Trac and Gitlab repo names do not match, then should manually configure the repo naem to that of Trac's
+
+The webook.cig file will ned to be made executable:
+    chomd +x webhook.cgi
 
 
 Apache Configuration
